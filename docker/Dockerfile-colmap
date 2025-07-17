@@ -46,4 +46,19 @@ RUN pip install \
     pillow \
     plotly \
     pyyaml \
-    trimesh
+    trimesh \
+    gdown
+
+# Set env var
+RUN SEQUENCE=CCTV \
+    PATH_TO_VIDEO=CCTV.mp4 \
+    DOWNSAMPLE_RATE=2 \
+    SCENE_TYPE=indoor
+
+# Run
+RUN git clone https://github.com/NVlabs/neuralangelo.git \
+    cd neuralangelo \
+    gdown 1MtMKh4zYWVoUt2xfN5SnUJ8ltbwIriuO \
+    git submodule update --init --recursive \
+    bash projects/neuralangelo/scripts/preprocess.sh ${SEQUENCE} ${PATH_TO_VIDEO} ${DOWNSAMPLE_RATE} ${SCENE_TYPE}
+
