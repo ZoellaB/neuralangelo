@@ -26,7 +26,9 @@ RUN apt-get update && apt-get install -y \
     qtbase5-dev \
     libqt5opengl5-dev \
     libcgal-dev \
-    libceres-dev
+    libceres-dev \
+    tmux
+
 # headless servers
 RUN apt-get update && apt-get install -y \
     xvfb
@@ -52,13 +54,14 @@ RUN pip install \
 # Set env var
 RUN SEQUENCE=CCTV \
     PATH_TO_VIDEO=CCTV.mp4 \
-    DOWNSAMPLE_RATE=2 \
+    DOWNSAMPLE_RATE=32 \
     SCENE_TYPE=indoor
 
 # Run
 RUN git clone https://github.com/NVlabs/neuralangelo.git \
     cd neuralangelo \
-    gdown 1MtMKh4zYWVoUt2xfN5SnUJ8ltbwIriuO \
-    git submodule update --init --recursive \
-    bash projects/neuralangelo/scripts/preprocess.sh ${SEQUENCE} ${PATH_TO_VIDEO} ${DOWNSAMPLE_RATE} ${SCENE_TYPE}
+    gdown {{ RUNPOD_SECRET_CCTV_LINK }} \
+    git submodule update --init --recursive
+
+CMD [ "bash", "projects/neuralangelo/scripts/preprocess.sh", "{SEQUENCE}", "${PATH_TO_VIDEO}", "${DOWNSAMPLE_RATE}", "${SCENE_TYPE}" ]
 
